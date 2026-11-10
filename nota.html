@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="estilosnota.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="corazones" id="corazones"></div>
+
+    <a href="index.html" class="volver">← Volver</a>
+
+    <div class="reproductor" id="reproductor">
+    <div class="rp-fila">
+        <div class="rp-disco"><span>🎵</span></div>
+
+        <div class="rp-textos">
+            <p class="reproductor-titulo">Chica ideal</p>
+            <p class="reproductor-subtitulo">Entre tantas personas, tuve la suerte de encontrar a alguien como tú
+            </p>
+        </div>
+
+        <div class="rp-ondas">
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <button class="rp-play" id="rpPlay" aria-label="Reproducir o pausar">▶</button>
+    </div>
+
+    <div class="rp-barra">
+        <span id="rpActual">0:00</span>
+        <input type="range" id="rpProgreso" min="0" max="100" value="0" step="0.1">
+        <span id="rpTotal">0:00</span>
+    </div>
+
+    <audio id="rpAudio" preload="metadata">
+        <source src="chica_ideal_mp3.mp3" type="audio/mpeg">
+    </audio>
+</div>
+
+    <main class="carta-papel">
+        <div class="sello">💌 </div>
+
+        <p class="nota-saludo">Sara, amor:</p>
+        <p>
+    Empezar algo siempre cuesta y también da miedo. Pero, sinceramente, estoy dispuesto a arriesgarme por ti, por lo que eres y por esa manera tan bonita que tienes de ser.
+
+Sara, no eres un simple gusto. No dudes del amor que está creciendo en mí por ti, porque, aunque a veces me cueste explicarlo, lo que siento es realmente genuino. Sentarme contigo a conversar, salir a caminar o simplemente compartir un momento a tu lado se ha convertido en uno de mis mayores privilegios.
+
+Te quiero mucho, amor. Y perdóname si en algunas ocasiones te he hecho dudar de lo que siento por ti. Quiero demostrarte día a día que mis sentimientos son sinceros y que realmente deseo cuidar esto tan bonito que estamos construyendo
+        </p>
+
+        <p>
+      
+        </p>
+
+        <p>
+            
+        </p>
+
+        <p>
+            
+        </p>
+
+        <p class="nota-despedida">
+     Me haces feliz y espero hacerte feliz.
+    
+            <br>
+            <span class="nota-firma">—Fabrizio❤️</span>
+        </p>
+    </main>
+
+        <script>
+        const contenedor = document.getElementById('corazones');
+        const emojis = ['💖', '💗', '💜', '💕', '🌸'];
+
+        for (let i = 0; i < 18; i++) {
+            const c = document.createElement('span');
+            c.className = 'corazon';
+            c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            c.style.left = Math.random() * 100 + '%';
+            c.style.fontSize = (14 + Math.random() * 22) + 'px';
+            c.style.animationDuration = (8 + Math.random() * 10) + 's';
+            c.style.animationDelay = (Math.random() * 10) + 's';
+            contenedor.appendChild(c);
+        }
+    </script>
+
+    <script>
+    (function () {
+        const audio = document.getElementById('rpAudio');
+        const btn = document.getElementById('rpPlay');
+        const barra = document.getElementById('rpProgreso');
+        const actual = document.getElementById('rpActual');
+        const total = document.getElementById('rpTotal');
+        const caja = document.getElementById('reproductor');
+
+        function fmt(s) {
+            if (!isFinite(s)) return '0:00';
+            const m = Math.floor(s / 60);
+            const r = Math.floor(s % 60).toString().padStart(2, '0');
+            return m + ':' + r;
+        }
+
+        function mostrarDuracion() {
+            total.textContent = fmt(audio.duration);
+        }
+
+        if (audio.readyState >= 1) mostrarDuracion();
+        audio.addEventListener('loadedmetadata', mostrarDuracion);
+
+        btn.addEventListener('click', function () {
+            if (audio.paused) {
+                audio.play().catch(function (e) { console.log('Error de audio:', e); });
+            } else {
+                audio.pause();
+            }
+        });
+
+        audio.addEventListener('play', function () {
+            caja.classList.add('sonando');
+            btn.textContent = '❚❚';
+        });
+
+        audio.addEventListener('pause', function () {
+            caja.classList.remove('sonando');
+            btn.textContent = '▶';
+        });
+
+        audio.addEventListener('ended', function () {
+            caja.classList.remove('sonando');
+            btn.textContent = '▶';
+        });
+
+        audio.addEventListener('timeupdate', function () {
+            if (!audio.duration) return;
+            const p = (audio.currentTime / audio.duration) * 100;
+            barra.value = p;
+            barra.style.setProperty('--progreso', p + '%');
+            actual.textContent = fmt(audio.currentTime);
+        });
+
+        barra.addEventListener('input', function () {
+            if (!audio.duration) return;
+            audio.currentTime = (barra.value / 100) * audio.duration;
+        });
+    })();
+    </script>
+</body>
+</html>
